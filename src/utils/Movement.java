@@ -1,38 +1,25 @@
-package utils;
+package src.utils;
 
 public class Movement {
-    private Position posOne;
-    private Position posTwo;
+
+    private Position initialPosition;
+    private Position finalPosition;
     private boolean oldWasMoved;
 
-    public Movement(Position posOne, Position posTwo, boolean oldWasMoved) {
-        this.posOne = posOne;
-        this.posTwo = posTwo;
+    public Movement(Position initialPosition, Position finalPosition, boolean oldWasMoved) {
+        this.initialPosition = initialPosition;
+        this.finalPosition = finalPosition;
         this.oldWasMoved = oldWasMoved;
     }
 
-    //Getters And Setters
-    public Position getPosOne() {
-        return posOne;
-    }
+    /*
+     * GETTERS AND SETTERS
+     */
 
-    public Position getPosTwo() {
-        return posTwo;
-    }
-
-    public boolean isOldWasMoved() {
-        return oldWasMoved;
-    }
-
-    public void setPosOne(Position posOne) {
-        this.posOne = posOne;
-    }
-
-    public void setPosTwo(Position posTwo) {
-        this.posTwo = posTwo;
-    }
-    
-    public void setOldWasMoved(boolean oldWasMoved) {
-        this.oldWasMoved = oldWasMoved;
-    }
+    public Position getInitialPosition() { return initialPosition; }
+    public void setInitialPosition(Position initialPosition) { this.initialPosition = initialPosition; }
+    public Position getFinalPosition() { return finalPosition; }
+    public void setFinalPosition(Position finalPosition) { this.finalPosition = finalPosition; }
+    public boolean getOldWasMoved() { return oldWasMoved; }
+    public void setOldWasMoved(boolean oldWasMoved) { this.oldWasMoved = oldWasMoved; }
 }

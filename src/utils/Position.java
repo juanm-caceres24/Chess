@@ -1,6 +1,7 @@
-package utils;
+package src.utils;
 
 public class Position {
+
     private int x;
     private int y;
 
@@ -9,11 +10,6 @@ public class Position {
         this.y = y;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
+    public int getX() { return x; }
+    public int getY() { return y; }
 }
