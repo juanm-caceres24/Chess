@@ -15,62 +15,62 @@ public class Knight extends Piece {
 
     public ArrayList<Position> possibleMovements(Position position) {
         ArrayList<Position> output = new ArrayList<Position>();
-        int x = position.getX();
-        int y = position.getY();
-        if (y + 1 <= 7) {
-            if (x + 2 <= 7)
-                output.add(new Position(x + 2, y + 1));
-            if (x - 2 >= 0)
-                output.add(new Position(x - 2, y + 1));
+        int row = position.getRow();
+        int column = position.getColumn();
+        if (column + 1 <= 7) {
+            if (row + 2 <= 7)
+                output.add(new Position(row + 2, column + 1));
+            if (row - 2 >= 0)
+                output.add(new Position(row - 2, column + 1));
         }
-        if (y - 1 >= 0) {
-            if (x + 2 <= 7)
-                output.add(new Position(x + 2, y - 1));
-            if (x - 2 >= 0)
-                output.add(new Position(x - 2, y - 1));
+        if (column - 1 >= 0) {
+            if (row + 2 <= 7)
+                output.add(new Position(row + 2, column - 1));
+            if (row - 2 >= 0)
+                output.add(new Position(row - 2, column - 1));
         }
-        if (y + 2 <= 7) {
-            if (x + 1 <= 7)
-                output.add(new Position(x + 1, y + 2));
-            if (x - 1 >= 0)
-                output.add(new Position(x - 1, y + 2));
+        if (column + 2 <= 7) {
+            if (row + 1 <= 7)
+                output.add(new Position(row + 1, column + 2));
+            if (row - 1 >= 0)
+                output.add(new Position(row - 1, column + 2));
         }
-        if (y - 2 >= 0) {
-            if (x + 1 <= 7)
-                output.add(new Position(x + 1, y - 2));
-            if (x - 1 >= 0)
-                output.add(new Position(x - 1, y - 2));
+        if (column - 2 >= 0) {
+            if (row + 1 <= 7)
+                output.add(new Position(row + 1, column - 2));
+            if (row - 1 >= 0)
+                output.add(new Position(row - 1, column - 2));
         }
         return output;
     }
 
-    public ArrayList<Position> possibleTakes(Position position) {
+    public ArrayList<Position> possibleCaptures(Position position) {
         ArrayList<Position> output = new ArrayList<Position>();
-        int x = position.getX();
-        int y = position.getY();
-        if (y + 1 <= 7) {
-            if (x + 2 <= 7)
-                output.add(new Position(x + 2, y + 1));
-            if (x - 2 >= 0)
-                output.add(new Position(x - 2, y + 1));
+        int row = position.getRow();
+        int column = position.getColumn();
+        if (column + 1 <= 7) {
+            if (row + 2 <= 7)
+                output.add(new Position(row + 2, column + 1));
+            if (row - 2 >= 0)
+                output.add(new Position(row - 2, column + 1));
         }
-        if (y - 1 >= 0) {
-            if (x + 2 <= 7)
-                output.add(new Position(x + 2, y - 1));
-            if (x - 2 >= 0)
-                output.add(new Position(x - 2, y - 1));
+        if (column - 1 >= 0) {
+            if (row + 2 <= 7)
+                output.add(new Position(row + 2, column - 1));
+            if (row - 2 >= 0)
+                output.add(new Position(row - 2, column - 1));
         }
-        if (y + 2 <= 7) {
-            if (x + 1 <= 7)
-                output.add(new Position(x + 1, y + 2));
-            if (x - 1 >= 0)
-                output.add(new Position(x - 1, y + 2));
+        if (column + 2 <= 7) {
+            if (row + 1 <= 7)
+                output.add(new Position(row + 1, column + 2));
+            if (row - 1 >= 0)
+                output.add(new Position(row - 1, column + 2));
         }
-        if (y - 2 >= 0) {
-            if (x + 1 <= 7)
-                output.add(new Position(x + 1, y - 2));
-            if (x - 1 >= 0)
-                output.add(new Position(x - 1, y - 2));
+        if (column - 2 >= 0) {
+            if (row + 1 <= 7)
+                output.add(new Position(row + 1, column - 2));
+            if (row - 1 >= 0)
+                output.add(new Position(row - 1, column - 2));
         }
         return output;
     }
