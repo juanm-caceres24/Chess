@@ -10,8 +10,6 @@ import src.model.pieces.impl.Pawn;
 import src.model.pieces.impl.Queen;
 import src.model.pieces.impl.Rook;
 
-
-
 public class Game {
 
     private Board board;
@@ -60,10 +58,8 @@ public class Game {
     }
 
     public boolean movePiece(Position from, Position to) {
-        if (gameService.checkMove(from, to, currentPlayer)) {
-            board.getBoard()[to.getRow()][to.getColumn()] = board.getBoard()[from.getRow()][from.getColumn()];
-            board.getBoard()[from.getRow()][from.getColumn()] = null;
-            return true;
+        switch (gameService.checkMove(from, to, currentPlayer)) {
+            
         }
         return false;
     }

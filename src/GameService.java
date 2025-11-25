@@ -16,19 +16,34 @@ public class GameService {
         this.board = board;
     }
 
-    public boolean checkMove(Position from, Position to, ColorEnum currentPlayer) {
+    /*
+     * METHODS
+     */
 
+    /*
+     * Return codes:
+     * -6 = pieces in the path
+     * -5 = pieces already moved (castling)
+     * -4 = cannot capture own piece
+     * -3 = not the player's piece
+     * -2 = no piece to move
+     * -1 = out of bounds
+     * 0 = normal move
+     * 1 = capture move
+     * 2 = castling move
+     * 3 = promotion move
+     */
+    public int checkMove(Position from, Position to, ColorEnum currentPlayer) {
         // Check 'from' position board bounds
-        if (from.getRow() < 0 || from.getRow() >= 8 || from.getColumn() < 0 || from.getColumn() >= 8) return false;
+        if (from.getRow() < 0 || from.getRow() >= 8 || from.getColumn() < 0 || from.getColumn() >= 8) return -1;
         // Get the piece at 'from' position
         Piece pieceToMove = board.getBoard()[from.getRow()][from.getColumn()];
         // Check 'from' position piece
-        if (pieceToMove == null) return false;
+        if (pieceToMove == null) return -2;
         // Check the piece color
-        if (pieceToMove.getColor() != currentPlayer) return false;
-
+        if (pieceToMove.getColor() != currentPlayer) return -3;
         // Check 'to' position board bounds
-        if (to.getRow() < 0 || to.getRow() >= 8 || to.getColumn() < 0 || to.getColumn() >= 8) return false;
+        if (to.getRow() < 0 || to.getRow() >= 8 || to.getColumn() < 0 || to.getColumn() >= 8) return -1;
         // Get the piece at 'to' position
         Piece targetPiece = board.getBoard()[to.getRow()][to.getColumn()];
         // Check 'to' position piece
@@ -36,14 +51,15 @@ public class GameService {
             // Check color piece
             if (targetPiece.getColor() == currentPlayer) {
                 // Check castling move
-                if (pieceToMove.getName() != PieceEnum.KING || pieceToMove.getName() != PieceEnum.ROOK) return false;
+                if (pieceToMove.getName() != PieceEnum.KING || pieceToMove.getName() != PieceEnum.ROOK) return -4;
                 // Check if the pieces have been moved before
-                if (pieceToMove.getWasMoved() || !targetPiece.getWasMoved()) return false;
+                if (pieceToMove.getWasMoved() || !targetPiece.getWasMoved()) return -5;
                 // Check if the path between king and rook is clear
-                if (!checkPiecesInPath(from, to)) return false;
-                // Check if the king is in check or passes through check --- TO BE IMPLEMENTED ---
+                if (!checkPiecesInPath(from, to)) return -6;
+                // Check if the king is in check or passes through check
+
             } else {
-                // 
+                
             }
         } else {
 
@@ -51,21 +67,69 @@ public class GameService {
     }
 
     public boolean checkPiecesInPath(Position from, Position to) {
-        ArrayList<Position> pathPositions = new ArrayList<>();
-        int rowDirection = Integer.signum(to.getRow() - from.getRow());
-        int columnDirection = Integer.signum(to.getColumn() - from.getColumn());
-        int currentRow = from.getRow() + rowDirection;
-        int currentColumn = from.getColumn() + columnDirection;
-        while (currentRow != to.getRow() || currentColumn != to.getColumn()) {
-            pathPositions.add(new Position(currentRow, currentColumn));
-            currentRow += rowDirection;
-            currentColumn += columnDirection;
+        // Get the deltas of row and column movement
+        int deltaRow = to.getRow() - from.getRow();
+        int deltaColumn = to.getColumn() - from.getColumn();
+        // Get the direction of row and column movement
+        int stepRow = Integer.signum(deltaRow);
+        int stepColumn = Integer.signum(deltaColumn);
+        // Iterate through the path from 'from' to 'to', excluding both endpoints
+        for (int row = from.getRow() + stepRow, column = from.getColumn() + stepColumn;
+                row != to.getRow() || column != to.getColumn();
+                row += stepRow, column += stepColumn) {
+            // Check if there is a piece in the current position
+            if (board.getBoard()[row][column] != null) return false;
         }
-        for (Position position : pathPositions) {
-            if (board.getBoard()[position.getRow()][position.getColumn()] != null) {
-                return false;
-            }
-        }
+        // If the loop completes, there are no pieces in the path
         return true;
     }
+    
+    public boolean isKingInCheck(ColorEnum kingColor) {
+        Piece piece;
+        ArrayList<Position> captureMoves;
+        // Get the king's position
+        Position kingPosition = findKingPosition(kingColor);
+        // Iterate through rows and columns to find opponent pieces
+        for (int row = 0; row < 8; row++) {
+            for (int column = 0; column < 8; column++) {
+                // Get the piece at the current position (or empty space too)
+                piece = board.getBoard()[row][column];
+                // Check if it's an opponent piece
+                if (piece != null && piece.getColor() != kingColor) {
+                    // Store the capture movements of the piece
+                    captureMoves = piece.possibleCaptures(new Position(row, column));
+                    // Check if this piece can move to the king's position
+                    if (captureMoves.contains(kingPosition)) {
+                        // If the piece can jump, no need to check path
+                        if (piece.getCanJump()) return true;
+                        // Check if there are pieces in the path to the king
+                        if (checkPiecesInPath(new Position(row, column), kingPosition)) return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public Position findKingPosition(ColorEnum kingColor) {
+        Piece piece;
+        // Iterate through rows and columns to find the king piece
+        for (int row = 0; row < 8; row++) {
+            for (int column = 0; column < 8; column++) {
+                // Get the piece at the current position
+                piece = board.getBoard()[row][column];
+                // Check if it's the king of the specified color
+                if (piece != null && piece.getName() == PieceEnum.KING && piece.getColor() == kingColor) {
+                    return new Position(row, column);
+                }
+            }
+        }
+        return null; // Should never happen if the king is on the board
+    }
+
+    /*
+     * GETTERS AND SETTERS
+     */
+
+    public Board getBoard() { return board; }
 }
