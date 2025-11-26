@@ -22,6 +22,9 @@ public class GameService {
 
     /*
      * Return codes:
+     * -9 = positions in castling are in check
+     * -8 = king would be in check after move
+     * -7 = not a valid move for the piece
      * -6 = pieces in the path
      * -5 = pieces already moved (castling)
      * -4 = cannot capture own piece
@@ -30,8 +33,11 @@ public class GameService {
      * -1 = out of bounds
      * 0 = normal move
      * 1 = capture move
-     * 2 = castling move
-     * 3 = promotion move
+     * 2 = castling move (UL)
+     * 3 = castling move (UR)
+     * 4 = castling move (DL)
+     * 5 = castling move (DR)
+     * 6 = promotion move
      */
     public int checkMove(Position from, Position to, ColorEnum currentPlayer) {
         // Check 'from' position board bounds
@@ -57,13 +63,70 @@ public class GameService {
                 // Check if the path between king and rook is clear
                 if (!checkPiecesInPath(from, to)) return -6;
                 // Check if the king is in check or passes through check
-
+                Position kingPosition = (pieceToMove.getName() == PieceEnum.KING) ? from : to;
+                // Get the direction of castling
+                int step = (to.getColumn() - from.getColumn()) > 0 ? 1 : -1;
+                // Check the positions the king passes through
+                for (int column = from.getColumn(); column != to.getColumn() + step; column += step) {
+                    kingPosition = new Position(from.getRow(), column);
+                    if (simulateMoveAndCheck(from, kingPosition, currentPlayer)) return -9;
+                }
+                // If all checks pass, it's a valid castling move
+                return 2;
             } else {
-                
+                // Check if the move is valid for the piece
+                if (!pieceToMove.possibleCaptures(from).contains(to)) return -7;
+                // If the piece cannot jump, check for pieces in the path
+                if (!pieceToMove.getCanJump()) {
+                    if (!checkPiecesInPath(from, to)) return -6;
+                }
+                // Check if it's promotion move
+                if (pieceToMove.getName() == PieceEnum.PAWN) {
+                    // Check if the pawn reaches the last row
+                    if ((pieceToMove.getColor() == ColorEnum.WHITE && to.getRow() == 0) ||
+                        (pieceToMove.getColor() == ColorEnum.BLACK && to.getRow() == 7)) {
+                        return 3;
+                    }
+                }
+                // Check if putting own king in check
+                if (simulateMoveAndCheck(from, to, currentPlayer)) return -8;
+                // If all checks pass, it's a valid capture move
+                return 1;
             }
         } else {
-
+            // Check if the move is valid for the piece
+            if (!pieceToMove.possibleMovements(from).contains(to)) return -7;
+            // If the piece cannot jump, check for pieces in the path
+            if (!pieceToMove.getCanJump()) {
+                if (!checkPiecesInPath(from, to)) return -6;
+            }
+            // Check if it's promotion move
+            if (pieceToMove.getName() == PieceEnum.PAWN) {
+                // Check if the pawn reaches the last row
+                if ((pieceToMove.getColor() == ColorEnum.WHITE && to.getRow() == 0) ||
+                    (pieceToMove.getColor() == ColorEnum.BLACK && to.getRow() == 7)) {
+                    return 3;
+                }
+            }
+            // Check if putting own king in check
+            if (simulateMoveAndCheck(from, to, currentPlayer)) return -8;            
+            // If all checks pass, it's a valid normal move
+            return 0;
         }
+    }
+
+    public boolean simulateMoveAndCheck(Position from, Position to, ColorEnum currentPlayer) {
+        Piece movingPiece = board.getBoard()[from.getRow()][from.getColumn()];
+        Piece targetPiece = board.getBoard()[to.getRow()][to.getColumn()];
+        // Simulate the move
+        board.getBoard()[to.getRow()][to.getColumn()] = movingPiece;
+        board.getBoard()[from.getRow()][from.getColumn()] = null;
+        // Check if the king is in check after the move
+        boolean isInCheck = isKingInCheck(currentPlayer);
+        // Revert the move
+        board.getBoard()[from.getRow()][from.getColumn()] = movingPiece;
+        board.getBoard()[to.getRow()][to.getColumn()] = targetPiece;
+        return isInCheck;
     }
 
     public boolean checkPiecesInPath(Position from, Position to) {
