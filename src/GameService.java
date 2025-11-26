@@ -22,6 +22,7 @@ public class GameService {
 
     /*
      * Return codes:
+     * -10 = king is currently in check
      * -9 = positions in castling are in check
      * -8 = king would be in check after move
      * -7 = not a valid move for the piece
@@ -56,23 +57,34 @@ public class GameService {
         if (targetPiece != null) {
             // Check color piece
             if (targetPiece.getColor() == currentPlayer) {
-                // Check castling move
-                if (pieceToMove.getName() != PieceEnum.KING || pieceToMove.getName() != PieceEnum.ROOK) return -4;
-                // Check if the pieces have been moved before
-                if (pieceToMove.getWasMoved() || !targetPiece.getWasMoved()) return -5;
-                // Check if the path between king and rook is clear
+                // Castling: must be king moving towards a rook of same color
+                if (pieceToMove.getName() != PieceEnum.KING || targetPiece.getName() != PieceEnum.ROOK) return -4;
+                // King and rook must be on the same row
+                if (from.getRow() != to.getRow()) return -7;
+                // King and rook must not have moved
+                if (pieceToMove.getWasMoved() || targetPiece.getWasMoved()) return -5;
+                // Path between king and rook (excluding endpoints) must be clear
                 if (!checkPiecesInPath(from, to)) return -6;
-                // Check if the king is in check or passes through check
-                Position kingPosition = (pieceToMove.getName() == PieceEnum.KING) ? from : to;
-                // Get the direction of castling
-                int step = (to.getColumn() - from.getColumn()) > 0 ? 1 : -1;
-                // Check the positions the king passes through
-                for (int column = from.getColumn(); column != to.getColumn() + step; column += step) {
-                    kingPosition = new Position(from.getRow(), column);
-                    if (simulateMoveAndCheck(from, kingPosition, currentPlayer)) return -9;
+                // Determine direction the king will move (towards the rook)
+                int step = Integer.signum(to.getColumn() - from.getColumn());
+                // King final destination is two squares towards the rook
+                Position kingStepPosition = new Position(from.getRow(), from.getColumn() + step);
+                Position kingFinalPosition = new Position(from.getRow(), from.getColumn() + 2 * step);
+                // The king cannot be in check at the start
+                if (isKingInCheck(currentPlayer)) return -10;
+                // The king cannot pass through a square that is under attack
+                if (simulateMoveAndCheck(from, kingStepPosition, currentPlayer)) return -9;
+                // The king cannot end in check
+                if (simulateMoveAndCheck(from, kingFinalPosition, currentPlayer)) return -8;
+                // If all castling validations passed then return code depending on side and player
+                boolean toLeft = step < 0;
+                if (currentPlayer == ColorEnum.WHITE) {
+                    // White starts on the bottom (row 7) => Down
+                    return toLeft ? 4 : 5; // 4 = DL, 5 = DR
+                } else {
+                    // Black starts on the top (row 0) => Up
+                    return toLeft ? 2 : 3; // 2 = UL, 3 = UR
                 }
-                // If all checks pass, it's a valid castling move
-                return 2;
             } else {
                 // Check if the move is valid for the piece
                 if (!pieceToMove.possibleCaptures(from).contains(to)) return -7;
