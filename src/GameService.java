@@ -34,11 +34,8 @@ public class GameService {
      * -1 = out of bounds
      * 0 = normal move
      * 1 = capture move
-     * 2 = castling move (UL)
-     * 3 = castling move (UR)
-     * 4 = castling move (DL)
-     * 5 = castling move (DR)
-     * 6 = promotion move
+     * 2 = castling move
+     * 3 = promotion move
      */
     public int checkMove(Position from, Position to, ColorEnum currentPlayer) {
         // Check 'from' position board bounds
@@ -76,15 +73,8 @@ public class GameService {
                 if (simulateMoveAndCheck(from, kingStepPosition, currentPlayer)) return -9;
                 // The king cannot end in check
                 if (simulateMoveAndCheck(from, kingFinalPosition, currentPlayer)) return -8;
-                // If all castling validations passed then return code depending on side and player
-                boolean toLeft = step < 0;
-                if (currentPlayer == ColorEnum.WHITE) {
-                    // White starts on the bottom (row 7) => Down
-                    return toLeft ? 4 : 5; // 4 = DL, 5 = DR
-                } else {
-                    // Black starts on the top (row 0) => Up
-                    return toLeft ? 2 : 3; // 2 = UL, 3 = UR
-                }
+                // If all checks pass, it's a valid castling move
+                return 2;
             } else {
                 // Check if the move is valid for the piece
                 if (!pieceToMove.possibleCaptures(from).contains(to)) return -7;
@@ -96,9 +86,7 @@ public class GameService {
                 if (pieceToMove.getName() == PieceEnum.PAWN) {
                     // Check if the pawn reaches the last row
                     if ((pieceToMove.getColor() == ColorEnum.WHITE && to.getRow() == 0) ||
-                        (pieceToMove.getColor() == ColorEnum.BLACK && to.getRow() == 7)) {
-                        return 3;
-                    }
+                        (pieceToMove.getColor() == ColorEnum.BLACK && to.getRow() == 7)) return 3;
                 }
                 // Check if putting own king in check
                 if (simulateMoveAndCheck(from, to, currentPlayer)) return -8;
@@ -116,9 +104,7 @@ public class GameService {
             if (pieceToMove.getName() == PieceEnum.PAWN) {
                 // Check if the pawn reaches the last row
                 if ((pieceToMove.getColor() == ColorEnum.WHITE && to.getRow() == 0) ||
-                    (pieceToMove.getColor() == ColorEnum.BLACK && to.getRow() == 7)) {
-                    return 3;
-                }
+                    (pieceToMove.getColor() == ColorEnum.BLACK && to.getRow() == 7)) return 3;
             }
             // Check if putting own king in check
             if (simulateMoveAndCheck(from, to, currentPlayer)) return -8;            
@@ -200,6 +186,10 @@ public class GameService {
             }
         }
         return null; // Should never happen if the king is on the board
+    }
+
+    public boolean isCheckmate() {
+        return false; 
     }
 
     /*

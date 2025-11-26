@@ -17,14 +17,10 @@ public class Pawn extends Piece {
         ArrayList<Position> output = new ArrayList<Position>();
         int row = position.getRow();
         int column = position.getColumn();
-        if (column + 1 <= 7 && color == ColorEnum.BLACK)
-            output.add(new Position(row, column + 1));
-        if (column - 1 >= 0 && color == ColorEnum.WHITE)
-            output.add(new Position(row, column - 1));
-        if (column + 2 <= 7 && color == ColorEnum.BLACK && !wasMoved)
-            output.add(new Position(row, column + 2));
-        if (column - 2 >= 0 && color == ColorEnum.WHITE && !wasMoved)
-            output.add(new Position(row, column - 2));
+        if (row + 1 <= 7 && color == ColorEnum.BLACK) output.add(new Position(row + 1, column));
+        if (row - 1 >= 0 && color == ColorEnum.WHITE) output.add(new Position(row - 1, column));
+        if (row + 2 <= 7 && color == ColorEnum.BLACK && !wasMoved) output.add(new Position(row + 2, column));
+        if (row - 2 >= 0 && color == ColorEnum.WHITE && !wasMoved) output.add(new Position(row - 2, column));
         return output;
     }
 
@@ -32,14 +28,10 @@ public class Pawn extends Piece {
         ArrayList<Position> output = new ArrayList<Position>();
         int row = position.getRow();
         int column = position.getColumn();
-        if (column + 1 <= 7 && row + 1 <= 7 && color == ColorEnum.BLACK)
-            output.add(new Position(row + 1, column + 1));
-        if (column - 1 >= 0 && row + 1 <= 7 && color == ColorEnum.WHITE)
-            output.add(new Position(row + 1, column - 1));
-        if (column + 1 <= 7 && row - 1 >= 0 && color == ColorEnum.BLACK)
-            output.add(new Position(row - 1, column + 1));
-        if (column - 1 >= 0 && row - 1 >= 0 && color == ColorEnum.WHITE)
-            output.add(new Position(row - 1, column - 1));
+        if (row + 1 <= 7 && column + 1 <= 7 && color == ColorEnum.BLACK) output.add(new Position(row + 1, column + 1));
+        if (row - 1 >= 0 && column + 1 <= 7 && color == ColorEnum.WHITE) output.add(new Position(row - 1, column + 1));
+        if (row + 1 <= 7 && column - 1 >= 0 && color == ColorEnum.BLACK) output.add(new Position(row + 1, column - 1));
+        if (row - 1 >= 0 && column - 1 >= 0 && color == ColorEnum.WHITE) output.add(new Position(row - 1, column - 1));
         return output;
     }
 }

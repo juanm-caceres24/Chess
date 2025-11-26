@@ -1,6 +1,7 @@
 package src.user_interface;
 
 import src.Game;
+import src.utils.Position;
 
 public abstract class UserInterface {
 
@@ -11,4 +12,7 @@ public abstract class UserInterface {
     }
 
     public abstract void showBoard();
+    public abstract void showData();
+    public abstract Position[] requestMove();
+    public abstract void showError(int errorCode);
 }

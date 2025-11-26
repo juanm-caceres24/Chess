@@ -2,13 +2,13 @@ package src.utils;
 
 public class Movement {
 
-    private Position initialPosition;
-    private Position finalPosition;
+    private Position from;
+    private Position to;
     private boolean oldWasMoved;
 
-    public Movement(Position initialPosition, Position finalPosition, boolean oldWasMoved) {
-        this.initialPosition = initialPosition;
-        this.finalPosition = finalPosition;
+    public Movement(Position from, Position to, boolean oldWasMoved) {
+        this.from = from;
+        this.to = to;
         this.oldWasMoved = oldWasMoved;
     }
 
@@ -16,10 +16,10 @@ public class Movement {
      * GETTERS AND SETTERS
      */
 
-    public Position getInitialPosition() { return initialPosition; }
-    public void setInitialPosition(Position initialPosition) { this.initialPosition = initialPosition; }
-    public Position getFinalPosition() { return finalPosition; }
-    public void setFinalPosition(Position finalPosition) { this.finalPosition = finalPosition; }
+    public Position getFrom() { return from; }
+    public void setFrom(Position from) { this.from = from; }
+    public Position getTo() { return to; }
+    public void setTo(Position to) { this.to = to; }
     public boolean getOldWasMoved() { return oldWasMoved; }
     public void setOldWasMoved(boolean oldWasMoved) { this.oldWasMoved = oldWasMoved; }
 }

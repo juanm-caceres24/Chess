@@ -18,24 +18,18 @@ public class Queen extends Piece {
         int row = position.getRow();
         int column = position.getColumn();
         for (int i = 1; i < 7; i++) {
-            if (column + i <= 7) {
-                output.add(new Position(row, column + i));
-                if (row + i <= 7)
-                    output.add(new Position(row + i, column + i));
-                if (row - i >= 0)
-                    output.add(new Position(row - i, column + i));
-            }
-            if (column - i >= 0) {
-                output.add(new Position(row, column - i));
-                if (row + i <= 7)
-                    output.add(new Position(row + i, column - i));
-                if (row - i >= 0)
-                    output.add(new Position(row - i, column - i));
-            }
-            if (row + i <= 7)
+            if (row + i <= 7) {
                 output.add(new Position(row + i, column));
-            if (row - i >= 0)
+                if (column + i <= 7) output.add(new Position(row + i, column + i));
+                if (column - i >= 0) output.add(new Position(row + i, column - i));
+            }
+            if (row - i >= 0) {
                 output.add(new Position(row - i, column));
+                if (column + i <= 7) output.add(new Position(row - i, column + i));
+                if (column - i >= 0) output.add(new Position(row - i, column - i));
+            }
+            if (column + i <= 7) output.add(new Position(row, column + i));
+            if (column - i >= 0) output.add(new Position(row, column - i));
         }
         return output;
     }
@@ -45,24 +39,18 @@ public class Queen extends Piece {
         int row = position.getRow();
         int column = position.getColumn();
         for (int i = 1; i < 7; i++) {
-            if (column + i <= 7) {
-                output.add(new Position(row, column + i));
-                if (row + i <= 7)
-                    output.add(new Position(row + i, column + i));
-                if (row - i >= 0)
-                    output.add(new Position(row - i, column + i));
-            }
-            if (column - i >= 0) {
-                output.add(new Position(row, column - i));
-                if (row + i <= 7)
-                    output.add(new Position(row + i, column - i));
-                if (row - i >= 0)
-                    output.add(new Position(row - i, column - i));
-            }
-            if (row + i <= 7)
+            if (row + i <= 7) {
                 output.add(new Position(row + i, column));
-            if (row - i >= 0)
+                if (column + i <= 7) output.add(new Position(row + i, column + i));
+                if (column - i >= 0) output.add(new Position(row + i, column - i));
+            }
+            if (row - i >= 0) {
                 output.add(new Position(row - i, column));
+                if (column + i <= 7) output.add(new Position(row - i, column + i));
+                if (column - i >= 0) output.add(new Position(row - i, column - i));
+            }
+            if (column + i <= 7) output.add(new Position(row, column + i));
+            if (column - i >= 0) output.add(new Position(row, column - i));
         }
         return output;
     }
