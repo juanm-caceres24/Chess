@@ -68,10 +68,8 @@ public class Game {
         }
     }
 
-    public boolean movePiece(Position from, Position to) {
+    public int movePiece(Position from, Position to) {
         int code = gameService.checkMove(from, to, currentPlayer);
-        // Negative codes indicate invalid moves/errors
-        if (code < 0) return false;
         switch (code) {
             case 0: { // Normal move
                 // Move piece
@@ -84,7 +82,7 @@ public class Game {
                 }
                 // Record movement
                 moveHistory.add(new Movement(from, to, oldWasMoved));
-                return true;
+                break;
             }
             case 1: { // Capture move
                 // Record captured piece
@@ -104,7 +102,7 @@ public class Game {
                 }
                 // Record movement
                 moveHistory.add(new Movement(from, to, oldWasMoved));
-                return true;
+                break;
             }
             case 2: { // Castling
                 // 'from' should be king, 'to' should be rook, so swap if not
@@ -129,23 +127,24 @@ public class Game {
                 board.getBoard()[from.getRow()][rookFinalColumn].setWasMoved(true);
                 // Record movement
                 moveHistory.add(new Movement(from, to, false));
-                return true;
+                break;
             }
             case 3: { // Promotion
                 // Replace pawn with a queen by default
                 Piece pawn = board.getBoard()[from.getRow()][from.getColumn()];
-                if (pawn == null || pawn.getName() != PieceEnum.PAWN) return false;
+                if (pawn == null || pawn.getName() != PieceEnum.PAWN) break;
                 ColorEnum color = pawn.getColor();
                 // Create new queen of same color
                 board.getBoard()[to.getRow()][to.getColumn()] = new Queen(color);
                 board.getBoard()[from.getRow()][from.getColumn()] = null;
                 // Mark the new queen as moved
                 board.getBoard()[to.getRow()][to.getColumn()].setWasMoved(true);
-                return true;
+                break;
             }
             default:
-                return false;
+                break;
         }
+        return code;
     }
 
     public void switchPlayer() {

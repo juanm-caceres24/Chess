@@ -97,6 +97,8 @@ public class Console extends UserInterface {
         Position[] movement = new Position[2];
         System.out.printf("Turn of %s. Requesting move: ", game.getCurrentPlayer());
         String input = scanner.nextLine();
+        // Check format
+        if (input.length() != 5 || input.charAt(2) != ' ') return null;
         String[] splitedInput = input.split(" ");
         movement[0] = new Position(parseInput(splitedInput[0])[0], parseInput(splitedInput[0])[1]);
         movement[1] = new Position(parseInput(splitedInput[1])[0], parseInput(splitedInput[1])[1]);
@@ -106,9 +108,18 @@ public class Console extends UserInterface {
     @Override
     public void showError(int errorCode) {
         switch (errorCode) {
-            case 0 -> { System.out.printf("ERROR: Invalid column input.\n"); }
-            case 1 -> { System.out.printf("ERROR: Invalid row input.\n"); }
-            case 2 -> { System.out.printf("ERROR: Invalid move.\n"); }
+            case -11 -> { System.out.printf("ERROR: Cannot castle while in check.\n"); }
+            case -10 -> { System.out.printf("ERROR: Cannot castle through check.\n"); }
+            case -9 -> { System.out.printf("ERROR: Move would put or leave king in check.\n"); }
+            case -8 -> { System.out.printf("ERROR: Invalid move for piece.\n"); }
+            case -7 -> { System.out.printf("ERROR: Pieces in the path of movement.\n"); }
+            case -6 -> { System.out.printf("ERROR: Piece has already moved (castling).\n"); }
+            case -5 -> { System.out.printf("ERROR: Cannot capture own piece.\n"); }
+            case -4 -> { System.out.printf("ERROR: Not player piece to move.\n"); }
+            case -3 -> { System.out.printf("ERROR: No piece at initial position.\n"); }
+            case -2 -> { System.out.printf("ERROR: Position out of board bounds.\n"); }
+            case -1 -> { System.out.printf("ERROR: Undefined error.\n"); }
+            case 0 -> { System.out.printf("ERROR: Input format incorrect.\n"); }
             default -> { System.out.printf("ERROR: Unknown error (code %d).\n", errorCode); }
         }
     }
@@ -133,7 +144,7 @@ public class Console extends UserInterface {
             case 'F', 'f' -> { movementCoords[1] = 5; }
             case 'G', 'g' -> { movementCoords[1] = 6; }
             case 'H', 'h' -> { movementCoords[1] = 7; }
-            default -> { showError(0); }
+            default -> { movementCoords[1] = -1; }
         }
         switch (input.charAt(1)) {
             case '1' -> { movementCoords[0] = 7; }
@@ -144,7 +155,7 @@ public class Console extends UserInterface {
             case '6' -> { movementCoords[0] = 2; }
             case '7' -> { movementCoords[0] = 1; }
             case '8' -> { movementCoords[0] = 0; }
-            default -> { showError(1); }
+            default -> { movementCoords[0] = -1; }
         }
         return movementCoords;
     }

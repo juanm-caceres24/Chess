@@ -12,16 +12,26 @@ public class Main {
         game.initializePieces();
         userInterface.showBoard();
         userInterface.showData();
+        Position[] positions;
         // Game loop
         while (!game.getGameService().isCheckmate()) {
-            Position[] positions = userInterface.requestMove();
+            // Get move from user
+            positions = userInterface.requestMove();
+            // Check the format of the input
+            if (positions == null) {
+                userInterface.showError(0);
+                continue;
+            }
+            // Attempt to move piece
+            int moveResult = game.movePiece(positions[0], positions[1]);
             // Only switch player and record board display if the move was successful
-            if (game.movePiece(positions[0], positions[1])) {
+            if (moveResult >= 0) {
                 userInterface.showBoard();
                 userInterface.showData();
                 game.switchPlayer();
             } else {
-                userInterface.showError(2);
+                // Show error message for invalid move
+                userInterface.showError(moveResult);
             }
         }
     }
